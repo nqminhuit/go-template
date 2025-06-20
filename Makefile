@@ -3,6 +3,7 @@ APP_REST=rest
 APP_WORKER=worker
 DOCKER_REST_IMAGE=rest
 DOCKER_WORKER_IMAGE=worker
+GOLANGCI_LINT := $(shell command -v golangci-lint 2> /dev/null)
 
 # Build Go binaries
 build:
@@ -41,3 +42,11 @@ fmt:
 # Tidy modules
 tidy:
 	go mod tidy
+
+lint-check:
+ifndef GOLANGCI_LINT
+	$(error "golangci-lint is not installed. Run `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`")
+endif
+
+lint: lint-check
+	$(GOLANGCI_LINT) run ./...

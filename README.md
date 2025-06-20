@@ -37,4 +37,5 @@ make run-rest      # Run rest locally
 make run-worker    # Run worker locally
 make fmt           # Format code
 make tidy          # Tidy go.mod
+make lint          # Run the linter
 ```
