@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devstack
+spec:
+  containers:
+    - name: rabbitmq
+      image: docker.io/library/rabbitmq:4-management
+      ports:
+        - containerPort: 5672  # AMQP
+        - containerPort: 15672 # Web UI
+      env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: guest
+        - name: RABBITMQ_DEFAULT_PASS
+          value: guest
+      readinessProbe:
+        exec:
+          command: ["rabbitmq-diagnostics", "status"]
+        periodSeconds: 10
+        timeoutSeconds: 5
+
+    - name: mongo
+      image: docker.io/library/mongo
+      ports:
+        - containerPort: 27017
+      readinessProbe:
+        exec:
+          command: ["mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 })"]
+        periodSeconds: 10
+        timeoutSeconds: 5
+
+    - name: redis
+      image: docker.io/library/redis
+      ports:
+        - containerPort: 6379
+      readinessProbe:
+        exec:
+          command: ["redis-cli", "ping"]
+        periodSeconds: 10
+        timeoutSeconds: 5
+
+    - name: rest
+      image: localhost/rest:latest
+      ports:
+        - containerPort: 8080
+      command: ["/app/rest"]
+      readinessProbe:
+        httpGet:
+          path: /healthz
+          port: 8080
+        periodSeconds: 5
+        timeoutSeconds: 2
+
+    - name: worker
+      image: localhost/worker:latest
+      command: ["/app/worker"]
