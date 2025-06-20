@@ -23,16 +23,18 @@ This is a minimal Go example showcasing how to build a distributed system with:
 ### Prerequisites
 
 Install:
-- [Go 1.22+](https://go.dev/)
+- [Go 1.24+](https://go.dev/)
 - Docker (for services)
 
-Start services with Docker:
-```bash
-# RabbitMQ
-docker run -d --name rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+Usage:
 
-# MongoDB
-docker run -d --name mongo -p 27017:27017 mongo
-
-# Redis
-docker run -d --name redis -p 6379:6379 redis
+``` shell
+make build         # Build binaries
+make podman-build  # Build container images
+make up            # Launch Mongo, Redis, RabbitMQ, rest, worker
+make down          # Tear them all down
+make run-rest      # Run rest locally
+make run-worker    # Run worker locally
+make fmt           # Format code
+make tidy          # Tidy go.mod
+```
